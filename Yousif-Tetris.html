@@ -58,6 +58,15 @@
     background-color: #888;
   }
 
+  /* Future block display container */
+  #next-block {
+    position: absolute;
+    top: 60px; /* Positioned below the score */
+    right: 10px;
+    width: 80px;
+    height: 80px;
+    border: 2px solid white;
+  }
   </style>
 </head>
 <body>
@@ -65,6 +74,11 @@
 <div id="score">Score: 0</div>
 <div id="high-score">High Score: 0</div>
 <button id="restart-button">Restart Game</button>
+
+<!-- Display the next tetromino -->
+<div id="next-block">
+  <canvas width="80" height="80" id="nextCanvas"></canvas>
+</div>
 
 <script>
 // get a random integer between the range of [min,max]
@@ -162,6 +176,7 @@ function placeTetromino() {
   }
 
   tetromino = getNextTetromino();
+  renderNextTetromino(); // Update the next block display
 }
 
 // show the game over screen
@@ -247,6 +262,26 @@ let highScore = parseInt(localStorage.getItem('highScore')) || 0; // Load high s
 
 // Update the high score display on page load
 document.getElementById('high-score').innerText = `High Score: ${highScore}`;
+
+// Canvas for rendering the next tetromino
+const nextCanvas = document.getElementById('nextCanvas');
+const nextContext = nextCanvas.getContext('2d');
+
+// Render the next tetromino in the small canvas
+function renderNextTetromino() {
+  nextContext.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+  const matrix = tetromino.matrix;
+  const color = colors[tetromino.name];
+  
+  nextContext.fillStyle = color;
+  for (let row = 0; row < matrix.length; row++) {
+    for (let col = 0; col < matrix[row].length; col++) {
+      if (matrix[row][col]) {
+        nextContext.fillRect(col * grid, row * grid, grid - 1, grid - 1);
+      }
+    }
+  }
+}
 
 // game loop
 function loop() {
