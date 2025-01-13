@@ -28,11 +28,21 @@
     top: 10px;
     left: 10px;
   }
+
+  #high-score {
+    color: white;
+    font-size: 24px;
+    font-family: monospace;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
   </style>
 </head>
 <body>
 <canvas width="320" height="640" id="game"></canvas>
 <div id="score">Score: 0</div>
+<div id="high-score">High Score: 0</div>
 
 <script>
 // get a random integer between the range of [min,max]
@@ -117,6 +127,13 @@ function placeTetromino() {
       }
       score += 100; // Increment score by 100 for each cleared line
       document.getElementById('score').innerText = `Score: ${score}`; // Update score display
+
+      // Check if the score exceeds the high score
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('highScore', highScore); // Save the new high score
+        document.getElementById('high-score').innerText = `High Score: ${highScore}`; // Update high score display
+      }
     } else {
       row--;
     }
@@ -174,6 +191,10 @@ let tetromino = getNextTetromino();
 let rAF = null;
 let gameOver = false;
 let score = 0; // Initialize score
+let highScore = parseInt(localStorage.getItem('highScore')) || 0; // Load high score from localStorage
+
+// Update the high score display on page load
+document.getElementById('high-score').innerText = `High Score: ${highScore}`;
 
 // game loop
 function loop() {
