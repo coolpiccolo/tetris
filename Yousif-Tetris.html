@@ -175,7 +175,9 @@ function placeTetromino() {
     }
   }
 
-  tetromino = getNextTetromino();
+  // Update current tetromino and set next tetromino
+  tetromino = nextTetromino;
+  nextTetromino = getNextTetromino();
   renderNextTetromino(); // Update the next block display
 }
 
@@ -215,7 +217,8 @@ function restartGame() {
 
   // Reset the tetromino sequence
   tetrominoSequence.length = 0;
-  tetromino = getNextTetromino();
+  nextTetromino = getNextTetromino(); // Set next tetromino
+  tetromino = nextTetromino; // Start the game with the next block as the current block
 
   // Hide the restart button
   document.getElementById('restart-button').style.display = 'none';
@@ -255,6 +258,7 @@ const colors = {
 
 let count = 0;
 let tetromino = getNextTetromino();
+let nextTetromino = getNextTetromino(); // Store the next tetromino
 let rAF = null;
 let gameOver = false;
 let score = 0; // Initialize score
@@ -270,8 +274,8 @@ const nextContext = nextCanvas.getContext('2d');
 // Render the next tetromino in the small canvas
 function renderNextTetromino() {
   nextContext.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
-  const matrix = tetromino.matrix;
-  const color = colors[tetromino.name];
+  const matrix = nextTetromino.matrix;
+  const color = colors[nextTetromino.name];
   
   nextContext.fillStyle = color;
   for (let row = 0; row < matrix.length; row++) {
