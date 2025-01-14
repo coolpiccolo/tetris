@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Basic Tetris HTML Game</title>
+  <meta charset="UTF-8">
+  <style>
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    background: black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  canvas {
+    border: 1px solid white;
+  }
+
+  #score {
+    color: white;
+    font-size: 24px;
+    font-family: monospace;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+  }
+
+  #high-score {
+    color: white;
+    font-size: 24px;
+    font-family: monospace;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+  }
+
+  #restart-button {
+    display: none; /* Hide button initially */
+    position: absolute;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: #555;
+    color: white;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+
+  #restart-button:hover {
+    background-color: #888;
+  }
+
+  /* Adjusted size for the next block display container */
+  #next-block {
+    position: absolute;
+    top: 60px; /* Positioned below the score */
+    right: 10px;
+    width: 160px; /* Increased width */
+    height: 160px; /* Increased height */
+    border: 2px solid white;
+  }
+  </style>
+</head>
+<body>
+<canvas width="320" height="640" id="game"></canvas>
+<div id="score">Score: 0</div>
+<div id="high-score">High Score: 0</div>
+<button id="restart-button">Restart Game</button>
+
+<!-- Display the next tetromino -->
+<div id="next-block">
+  <canvas width="160" height="160" id="nextCanvas"></canvas> <!-- Increased canvas size -->
+</div>
+
+<script>
+// Existing game code here...
+
+// Canvas for rendering the next tetromino
+const nextCanvas = document.getElementById('nextCanvas');
+const nextContext = nextCanvas.getContext('2d');
+
+// Adjust grid size for the larger next block display
+const nextGrid = 32; // Increased grid size for larger next block
+
+// Render the next tetromino in the larger canvas
+function renderNextTetromino() {
+  nextContext.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+  const matrix = nextTetromino.matrix;
+  const color = colors[nextTetromino.name];
+  
+  nextContext.fillStyle = color;
+  for (let row = 0; row < matrix.length; row++) {
+    for (let col = 0; col < matrix[row].length; col++) {
+      if (matrix[row][col]) {
+        nextContext.fillRect(col * nextGrid, row * nextGrid, nextGrid - 1, nextGrid - 1); // Adjusted grid size
+      }
+    }
+  }
+}
+
+// Rest of the game code continues as is...
+
+</script>
+</body>
+</html>
