@@ -161,7 +161,7 @@ function placeTetromino() {
           playfield[r][c] = playfield[r-1][c];
         }
       }
-      score += 100; // Increment score by 100 for each cleared line
+      score += 9999; // Increment score by 100 for each cleared line
       document.getElementById('score').innerText = `Score: ${score}`; // Update score display
 
       // Check if the score exceeds the high score
