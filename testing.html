@@ -59,17 +59,25 @@
       background-color: #888;
     }
 
-    /* Adjusted size for the next block display container */
+    /* Adjusted for centering the next block container */
     #next-block {
       position: absolute;
       top: 50%; /* Center vertically */
       left: 50%; /* Center horizontally */
-      transform: translate(-50%, -50%); /* Offset by half the width/height to truly center */
-      width: 160px; /* Increased width */
-      height: 160px; /* Increased height */
+      transform: translate(-50%, -50%); /* Offset by half the width and height */
+      width: 160px; /* Size of the next block box */
+      height: 160px; /* Size of the next block box */
       border: 2px solid white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
+    /* Center the canvas inside #next-block */
+    #nextCanvas {
+      width: 100%; /* Make canvas take up all space within its container */
+      height: 100%; /* Make canvas take up all space within its container */
+    }
   </style>
 </head>
 <body>
@@ -279,7 +287,7 @@
       nextContext.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
       const matrix = nextTetromino.matrix;
       const color = colors[nextTetromino.name];
-
+      
       nextContext.fillStyle = color;
       for (let row = 0; row < matrix.length; row++) {
         for (let col = 0; col < matrix[row].length; col++) {
@@ -329,45 +337,35 @@
       }
     }
 
-    // listen to keyboard events to move the active tetromino
+    // Start the game loop
+    loop();
+
+    // Handle key events
     document.addEventListener('keydown', function(e) {
       if (gameOver) return;
 
-      // left and right arrow keys (move)
-      if (e.which === 37 || e.which === 39) {
-        const col = e.which === 37
-          ? tetromino.col - 1
-          : tetromino.col + 1;
-        if (isValidMove(tetromino.matrix, tetromino.row, col)) {
-          tetromino.col = col;
+      if (e.key === 'ArrowLeft') {
+        if (isValidMove(tetromino.matrix, tetromino.row, tetromino.col - 1)) {
+          tetromino.col--;
         }
-      }
-
-      // up arrow key (rotate)
-      if (e.which === 38) {
-        const matrix = rotate(tetromino.matrix);
-        if (isValidMove(matrix, tetromino.row, tetromino.col)) {
-          tetromino.matrix = matrix;
+      } else if (e.key === 'ArrowRight') {
+        if (isValidMove(tetromino.matrix, tetromino.row, tetromino.col + 1)) {
+          tetromino.col++;
         }
-      }
-
-      // down arrow key (drop)
-      if(e.which === 40) {
-        const row = tetromino.row + 1;
-        if (!isValidMove(tetromino.matrix, row, tetromino.col)) {
-          tetromino.row = row - 1;
-          placeTetromino();
-          return;
+      } else if (e.key === 'ArrowDown') {
+        if (isValidMove(tetromino.matrix, tetromino.row + 1, tetromino.col)) {
+          tetromino.row++;
         }
-        tetromino.row = row;
+      } else if (e.key === 'ArrowUp') {
+        const rotated = rotate(tetromino.matrix);
+        if (isValidMove(rotated, tetromino.row, tetromino.col)) {
+          tetromino.matrix = rotated;
+        }
       }
     });
 
-    // Event listener for the restart button
+    // Handle restart button click
     document.getElementById('restart-button').addEventListener('click', restartGame);
-
-    // start the game
-    rAF = requestAnimationFrame(loop);
   </script>
 </body>
 </html>
