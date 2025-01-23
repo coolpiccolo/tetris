@@ -40,7 +40,7 @@
   }
 
   #restart-button {
-    display: none; /* Hide button initially */
+    display: none;
     position: absolute;
     bottom: 50px;
     left: 50%;
@@ -58,13 +58,13 @@
     background-color: #888;
   }
 
-  /* Future block display container */
   #next-block {
     position: absolute;
-    top: 60px; /* Positioned below the score */
-    right: 10px;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
     width: 150px;
-    height: 150px;
+    height: 135px;
     border: 2px solid white;
   }
   </style>
@@ -74,21 +74,19 @@
 <div id="score">Score: 0</div>
 <div id="high-score">High Score: 0</div>
 <button id="restart-button">Restart Game</button>
-
-<!-- Display the next tetromino -->
 <div id="next-block">
   <canvas width="150" height="150" id="nextCanvas"></canvas>
 </div>
 
 <script>
-// get a random integer between the range of [min,max]
+// Helper function to get a random integer between the range of [min, max]
 function getRandomInt(min, max) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-// generate a new tetromino sequence
+// Generate a new tetromino sequence
 function generateSequence() {
   const sequence = ['I', 'J', 'L', 'O', 'S', 'T', 'Z'];
   while (sequence.length) {
@@ -98,7 +96,7 @@ function generateSequence() {
   }
 }
 
-// get the next tetromino in the sequence
+// Get the next tetromino in the sequence
 function getNextTetromino() {
   if (tetrominoSequence.length === 0) {
     generateSequence();
@@ -115,16 +113,15 @@ function getNextTetromino() {
   };
 }
 
-// rotate an NxN matrix 90deg
+// Rotate an NxN matrix 90 degrees
 function rotate(matrix) {
   const N = matrix.length - 1;
-  const result = matrix.map((row, i) =>
+  return matrix.map((row, i) =>
     row.map((val, j) => matrix[N - j][i])
   );
-  return result;
 }
 
-// check if the move is valid
+// Check if the move is valid
 function isValidMove(matrix, cellRow, cellCol) {
   for (let row = 0; row < matrix.length; row++) {
     for (let col = 0; col < matrix[row].length; col++) {
@@ -140,7 +137,7 @@ function isValidMove(matrix, cellRow, cellCol) {
   return true;
 }
 
-// place the tetromino on the playfield
+// Place the tetromino on the playfield
 function placeTetromino() {
   for (let row = 0; row < tetromino.matrix.length; row++) {
     for (let col = 0; col < tetromino.matrix[row].length; col++) {
@@ -153,35 +150,35 @@ function placeTetromino() {
     }
   }
 
-  // check for line clears
+  // Check for line clears
   for (let row = playfield.length - 1; row >= 0; ) {
     if (playfield[row].every(cell => !!cell)) {
       for (let r = row; r >= 0; r--) {
         for (let c = 0; c < playfield[r].length; c++) {
-          playfield[r][c] = playfield[r-1][c];
+          playfield[r][c] = playfield[r - 1][c];
         }
       }
-      score += 100; // Increment score by 100 for each cleared line
-      document.getElementById('score').innerText = `Score: ${score}`; // Update score display
+      score += 100;
+      document.getElementById('score').innerText = `Score: ${score}`;
 
-      // Check if the score exceeds the high score
+      // Update high score
       if (score > highScore) {
         highScore = score;
-        localStorage.setItem('highScore', highScore); // Save the new high score
-        document.getElementById('high-score').innerText = `High Score: ${highScore}`; // Update high score display
+        localStorage.setItem('highScore', highScore);
+        document.getElementById('high-score').innerText = `High Score: ${highScore}`;
       }
     } else {
       row--;
     }
   }
 
-  // Update current tetromino and set next tetromino
+  // Update tetrominoes
   tetromino = nextTetromino;
   nextTetromino = getNextTetromino();
-  renderNextTetromino(); // Update the next block display
+  renderNextTetromino();
 }
 
-// show the game over screen
+// Show game over screen
 function showGameOver() {
   cancelAnimationFrame(rAF);
   gameOver = true;
@@ -194,20 +191,16 @@ function showGameOver() {
   context.textAlign = 'center';
   context.textBaseline = 'middle';
   context.fillText('GAME OVER!', canvas.width / 2, canvas.height / 2);
-
-  // Show the restart button
   document.getElementById('restart-button').style.display = 'block';
 }
 
-// Restart the game by resetting variables and playfield
+// Restart the game
 function restartGame() {
-  // Reset the score and game over state
   score = 0;
   document.getElementById('score').innerText = `Score: ${score}`;
   gameOver = false;
   playfield.length = 0;
 
-  // Reset the playfield and tetrominoes
   for (let row = -2; row < 20; row++) {
     playfield[row] = [];
     for (let col = 0; col < 10; col++) {
@@ -215,15 +208,10 @@ function restartGame() {
     }
   }
 
-  // Reset the tetromino sequence
   tetrominoSequence.length = 0;
-  nextTetromino = getNextTetromino(); // Set next tetromino
-  tetromino = nextTetromino; // Start the game with the next block as the current block
-
-  // Hide the restart button
+  nextTetromino = getNextTetromino();
+  tetromino = nextTetromino;
   document.getElementById('restart-button').style.display = 'none';
-
-  // Restart the game loop
   rAF = requestAnimationFrame(loop);
 }
 
@@ -233,7 +221,6 @@ const grid = 32;
 const tetrominoSequence = [];
 const playfield = [];
 
-// initialize the playfield
 for (let row = -2; row < 20; row++) {
   playfield[row] = [];
   for (let col = 0; col < 10; col++) {
@@ -241,7 +228,6 @@ for (let row = -2; row < 20; row++) {
   }
 }
 
-// tetrominos definition
 const tetrominos = {
   'I': [[0,0,0,0], [1,1,1,1], [0,0,0,0], [0,0,0,0]],
   'J': [[1,0,0], [1,1,1], [0,0,0]],
@@ -258,42 +244,38 @@ const colors = {
 
 let count = 0;
 let tetromino = getNextTetromino();
-let nextTetromino = getNextTetromino(); // Store the next tetromino
+let nextTetromino = getNextTetromino();
 let rAF = null;
 let gameOver = false;
-let score = 0; // Initialize score
-let highScore = parseInt(localStorage.getItem('highScore')) || 0; // Load high score from localStorage
+let score = 0;
+let highScore = parseInt(localStorage.getItem('highScore')) || 0;
 
-// Update the high score display on page load
 document.getElementById('high-score').innerText = `High Score: ${highScore}`;
 
-// Canvas for rendering the next tetromino
 const nextCanvas = document.getElementById('nextCanvas');
 const nextContext = nextCanvas.getContext('2d');
 
-// Render the next tetromino in the small canvas
+// Render the next tetromino
 function renderNextTetromino() {
   nextContext.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
   const matrix = nextTetromino.matrix;
   const color = colors[nextTetromino.name];
-  const offsetX = Math.floor((nextCanvas.width - matrix[0].length * grid) / 2);
-  const offsetY = Math.floor((nextCanvas.height - matrix.length * grid) / 2);
+  
   nextContext.fillStyle = color;
-  matrix.forEach((row, rowIndex) => {
-    row.forEach((cell, colIndex) => {
-      if (cell) {
-        nextContext.fillRect(offsetX + colIndex * grid, offsetY + rowIndex * grid, grid - 1, grid - 1);
+  for (let row = 0; row < matrix.length; row++) {
+    for (let col = 0; col < matrix[row].length; col++) {
+      if (matrix[row][col]) {
+        nextContext.fillRect(col * grid, row * grid, grid - 1, grid - 1);
       }
-    });
-  });
+    }
+  }
 }
 
-// game loop
+// Game loop
 function loop() {
   rAF = requestAnimationFrame(loop);
-  context.clearRect(0,0,canvas.width,canvas.height);
+  context.clearRect(0, 0, canvas.width, canvas.height);
 
-  // draw the playfield
   for (let row = 0; row < 20; row++) {
     for (let col = 0; col < 10; col++) {
       if (playfield[row][col]) {
@@ -304,7 +286,6 @@ function loop() {
     }
   }
 
-  // draw the active tetromino
   if (tetromino) {
     if (++count > 35) {
       tetromino.row++;
@@ -327,21 +308,17 @@ function loop() {
   }
 }
 
-// listen to keyboard events to move the active tetromino
+// Listen to keyboard events to move the active tetromino
 document.addEventListener('keydown', function(e) {
   if (gameOver) return;
 
-  // left and right arrow keys (move)
   if (e.which === 37 || e.which === 39) {
-    const col = e.which === 37
-      ? tetromino.col - 1
-      : tetromino.col + 1;
+    const col = e.which === 37 ? tetromino.col - 1 : tetromino.col + 1;
     if (isValidMove(tetromino.matrix, tetromino.row, col)) {
       tetromino.col = col;
     }
   }
 
-  // up arrow key (rotate)
   if (e.which === 38) {
     const matrix = rotate(tetromino.matrix);
     if (isValidMove(matrix, tetromino.row, tetromino.col)) {
@@ -349,8 +326,7 @@ document.addEventListener('keydown', function(e) {
     }
   }
 
-  // down arrow key (drop)
-  if(e.which === 40) {
+  if (e.which === 40) {
     const row = tetromino.row + 1;
     if (!isValidMove(tetromino.matrix, row, tetromino.col)) {
       tetromino.row = row - 1;
@@ -361,10 +337,10 @@ document.addEventListener('keydown', function(e) {
   }
 });
 
-// Event listener for the restart button
+// Restart game event listener
 document.getElementById('restart-button').addEventListener('click', restartGame);
 
-// start the game
+// Start the game loop
 rAF = requestAnimationFrame(loop);
 </script>
 </body>
