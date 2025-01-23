@@ -351,14 +351,14 @@ document.addEventListener('keydown', function(e) {
     }
   }
 
-  // up arrow key (rotate)
+    // up arrow key (rotate)
   if (e.which === 38) {
     const matrix = rotate(tetromino.matrix);
     if (isValidMove(matrix, tetromino.row, tetromino.col)) {
       tetromino.matrix = matrix;
     }
   }
-
+  
   // down arrow key (drop)
   if(e.which === 40) {
     const row = tetromino.row + 1;
