@@ -177,9 +177,25 @@ function placeTetromino() {
 
   // Update current tetromino and set next tetromino
   tetromino = nextTetromino;
-  nextTetromino = getNextTetromino();
-  renderNextTetromino(); // Update the next block display
+  function renderNextTetromino() {
+  nextContext.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+  const matrix = nextTetromino.matrix;
+  const color = colors[nextTetromino.name];
+
+  // Calculate offsets to center the tetromino within the canvas
+  const offsetX = Math.floor((nextCanvas.width - matrix[0].length * grid) / 2);
+  const offsetY = Math.floor((nextCanvas.height - matrix.length * grid) / 2);
+
+  nextContext.fillStyle = color;
+  for (let row = 0; row < matrix.length; row++) {
+    for (let col = 0; col < matrix[row].length; col++) {
+      if (matrix[row][col]) {
+        nextContext.fillRect(offsetX + col * grid, offsetY + row * grid, grid - 1, grid - 1);
+      }
+    }
+  }
 }
+
 
 // show the game over screen
 function showGameOver() {
@@ -252,15 +268,9 @@ const tetrominos = {
   'T': [[0,1,0], [1,1,1], [0,0,0]]
 };
 
-// Load images for tetrominos
-const images = {https://static1.srcdn.com/wordpress/wp-content/uploads/2017/02/Goku-Black-from-Dragon-Ball-Super.jpg;
-const tetrominoNames = ['I', 'J', 'L', 'O', 'S', 'T', 'Z'];
-
-tetrominoNames.forEach(name => {
-  const img = new Image();
-  img.src = `images/$https://static1.srcdn.com/wordpress/wp-content/uploads/2017/02/Goku-Black-from-Dragon-Ball-Super.png`; // Replace with the actual path to your images
-  images[https://static1.srcdn.com/wordpress/wp-content/uploads/2017/02/Goku-Black-from-Dragon-Ball-Super.jpg] = img;
-});
+const colors = {
+  'I': 'cyan', 'O': 'yellow', 'T': 'purple', 'S': 'green', 'Z': 'red', 'J': 'blue', 'L': 'orange'
+};
 
 let count = 0;
 let tetromino = getNextTetromino();
@@ -277,57 +287,17 @@ document.getElementById('high-score').innerText = `High Score: ${highScore}`;
 const nextCanvas = document.getElementById('nextCanvas');
 const nextContext = nextCanvas.getContext('2d');
 
-// Render the playfield with images
-function renderPlayfield() {
-  for (let row = 0; row < 20; row++) {
-    for (let col = 0; col < 10; col++) {
-      if (playfield[row][col]) {
-        const name = playfield[row][col];
-        const img = images[name];
-        if (img.complete) {
-          context.drawImage(img, col * grid, row * grid, grid, grid);
-        }
-      }
-    }
-  }
-}
-
-// Render the active tetromino with images
-function renderTetromino(tetromino) {
-  const img = images[tetromino.name];
-  if (!img.complete) return;
-  for (let row = 0; row < tetromino.matrix.length; row++) {
-    for (let col = 0; col < tetromino.matrix[row].length; col++) {
-      if (tetromino.matrix[row][col]) {
-        context.drawImage(
-          img,
-          (tetromino.col + col) * grid,
-          (tetromino.row + row) * grid,
-          grid,
-          grid
-        );
-      }
-    }
-  }
-}
-
-// Render the next tetromino with images
+// Render the next tetromino in the small canvas
 function renderNextTetromino() {
   nextContext.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
   const matrix = nextTetromino.matrix;
-  const img = images[nextTetromino.name];
-  if (!img.complete) return;
-
+  const color = colors[nextTetromino.name];
+  
+  nextContext.fillStyle = color;
   for (let row = 0; row < matrix.length; row++) {
     for (let col = 0; col < matrix[row].length; col++) {
       if (matrix[row][col]) {
-        nextContext.drawImage(
-          img,
-          col * grid,
-          row * grid,
-          grid,
-          grid
-        );
+        nextContext.fillRect(col * grid, row * grid, grid - 1, grid - 1);
       }
     }
   }
@@ -336,11 +306,40 @@ function renderNextTetromino() {
 // game loop
 function loop() {
   rAF = requestAnimationFrame(loop);
-  context.clearRect(0, 0, canvas.width, canvas.height);
+  context.clearRect(0,0,canvas.width,canvas.height);
 
-  // Draw playfield and tetrominoes with images
-  renderPlayfield();
-  renderTetromino(tetromino);
+  // draw the playfield
+  for (let row = 0; row < 20; row++) {
+    for (let col = 0; col < 10; col++) {
+      if (playfield[row][col]) {
+        const name = playfield[row][col];
+        context.fillStyle = colors[name];
+        context.fillRect(col * grid, row * grid, grid - 1, grid - 1);
+      }
+    }
+  }
+
+  // draw the active tetromino
+  if (tetromino) {
+    if (++count > 35) {
+      tetromino.row++;
+      count = 0;
+
+      if (!isValidMove(tetromino.matrix, tetromino.row, tetromino.col)) {
+        tetromino.row--;
+        placeTetromino();
+      }
+    }
+
+    context.fillStyle = colors[tetromino.name];
+    for (let row = 0; row < tetromino.matrix.length; row++) {
+      for (let col = 0; col < tetromino.matrix[row].length; col++) {
+        if (tetromino.matrix[row][col]) {
+          context.fillRect((tetromino.col + col) * grid, (tetromino.row + row) * grid, grid - 1, grid - 1);
+        }
+      }
+    }
+  }
 }
 
 // listen to keyboard events to move the active tetromino
