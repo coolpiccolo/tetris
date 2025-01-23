@@ -1,1 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Basic Tetris HTML Game</title>
+  <meta charset="UTF-8">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
 
+    body {
+      background: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column; /* Aligns content in a column */
+      position: relative;
+    }
+
+    .game-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px; /* Adds spacing between game and next block */
+    }
+
+    canvas {
+      border: 1px solid white;
+    }
+
+    #score, #high-score {
+      color: white;
+      font-size: 24px;
+      font-family: monospace;
+      margin: 10px;
+    }
+
+    #restart-button {
+      display: none; /* Hide button initially */
+      position: relative;
+      padding: 10px 20px;
+      background-color: #555;
+      color: white;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+
+    #restart-button:hover {
+      background-color: #888;
+    }
+
+    /* Next block display container */
+    #next-block {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 150px;
+      height: 150px;
+      border: 2px solid white;
+    }
+  </style>
+</head>
+<body>
+  <div id="score">Score: 0</div>
+  <div id="high-score">High Score: 0</div>
+  
+  <div class="game-container">
+    <canvas width="320" height="640" id="game"></canvas>
+    <div id="next-block">
+      <canvas width="150" height="150" id="nextCanvas"></canvas>
+    </div>
+  </div>
+
+  <button id="restart-button">Restart Game</button>
+
+  <script>
+    // Your existing JavaScript remains the same
+  </script>
+</body>
+</html>
