@@ -40,7 +40,7 @@
   }
 
   #restart-button {
-    display: none; /* Hide button initially */
+    display: none;
     position: absolute;
     bottom: 50px;
     left: 50%;
@@ -58,10 +58,9 @@
     background-color: #888;
   }
 
-  /* Future block display container */
   #next-block {
     position: absolute;
-    top: 60px; /* Positioned below the score */
+    top: 60px;
     right: 10px;
     width: 150px;
     height: 150px;
@@ -75,7 +74,6 @@
 <div id="high-score">High Score: 0</div>
 <button id="restart-button">Restart Game</button>
 
-<!-- Display the next tetromino -->
 <div id="next-block">
   <canvas width="150" height="150" id="nextCanvas"></canvas>
 </div>
@@ -248,6 +246,34 @@ function loop() {
     }
   }
 }
+
+document.addEventListener('keydown', function(e) {
+  if (gameOver) return;
+
+  if (e.key === 'ArrowLeft') {
+    const col = tetromino.col - 1;
+    if (isValidMove(tetromino.matrix, tetromino.row, col)) {
+      tetromino.col = col;
+    }
+  } else if (e.key === 'ArrowRight') {
+    const col = tetromino.col + 1;
+    if (isValidMove(tetromino.matrix, tetromino.row, col)) {
+      tetromino.col = col;
+    }
+  } else if (e.key === 'ArrowUp') {
+    const matrix = rotate(tetromino.matrix);
+    if (isValidMove(matrix, tetromino.row, tetromino.col)) {
+      tetromino.matrix = matrix;
+    }
+  } else if (e.key === 'ArrowDown') {
+    const row = tetromino.row + 1;
+    if (isValidMove(tetromino.matrix, row, tetromino.col)) {
+      tetromino.row = row;
+    } else {
+      placeTetromino();
+    }
+  }
+});
 
 const canvas = document.getElementById('game');
 const context = canvas.getContext('2d');
