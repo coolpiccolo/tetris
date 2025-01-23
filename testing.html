@@ -283,26 +283,6 @@ let highScore = parseInt(localStorage.getItem('highScore')) || 0; // Load high s
 // Update the high score display on page load
 document.getElementById('high-score').innerText = `High Score: ${highScore}`;
 
-// Canvas for rendering the next tetromino
-const nextCanvas = document.getElementById('nextCanvas');
-const nextContext = nextCanvas.getContext('2d');
-
-// Render the next tetromino in the small canvas
-function renderNextTetromino() {
-  nextContext.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
-  const matrix = nextTetromino.matrix;
-  const color = colors[nextTetromino.name];
-  
-  nextContext.fillStyle = color;
-  for (let row = 0; row < matrix.length; row++) {
-    for (let col = 0; col < matrix[row].length; col++) {
-      if (matrix[row][col]) {
-        nextContext.fillRect(col * grid, row * grid, grid - 1, grid - 1);
-      }
-    }
-  }
-}
-
 // game loop
 function loop() {
   rAF = requestAnimationFrame(loop);
