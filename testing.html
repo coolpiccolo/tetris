@@ -81,6 +81,22 @@
 </div>
 
 <script>
+  // Render the next tetromino
+function renderNextTetromino() {
+  nextContext.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
+  const matrix = nextTetromino.matrix;
+  const color = colors[nextTetromino.name];
+  const offsetX = Math.floor((nextCanvas.width - matrix[0].length * grid) / 2);
+  const offsetY = Math.floor((nextCanvas.height - matrix.length * grid) / 2);
+  nextContext.fillStyle = color;
+  matrix.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      if (cell) {
+        nextContext.fillRect(offsetX + colIndex * grid, offsetY + rowIndex * grid, grid - 1, grid - 1);
+      }
+    });
+  });
+}
 // get a random integer between the range of [min,max]
 function getRandomInt(min, max) {
   min = Math.ceil(min);
