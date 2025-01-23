@@ -276,15 +276,16 @@ function renderNextTetromino() {
   nextContext.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
   const matrix = nextTetromino.matrix;
   const color = colors[nextTetromino.name];
-  
+  const offsetX = Math.floor((nextCanvas.width - matrix[0].length * grid) / 2);
+  const offsetY = Math.floor((nextCanvas.height - matrix.length * grid) / 2);
   nextContext.fillStyle = color;
-  for (let row = 0; row < matrix.length; row++) {
-    for (let col = 0; col < matrix[row].length; col++) {
-      if (matrix[row][col]) {
-        nextContext.fillRect(col * grid, row * grid, grid - 1, grid - 1);
+  matrix.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      if (cell) {
+        nextContext.fillRect(offsetX + colIndex * grid, offsetY + rowIndex * grid, grid - 1, grid - 1);
       }
-    }
-  }
+    });
+  });
 }
 
 // game loop
