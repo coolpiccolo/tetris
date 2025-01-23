@@ -146,12 +146,40 @@ function placeTetromino() {
     for (let col = 0; col < tetromino.matrix[row].length; col++) {
       if (tetromino.matrix[row][col]) {
         if (tetromino.row + row < 0) {
-          return showGameOver();
+          return showGameOver(); // End the game if pieces exceed the top
         }
         playfield[tetromino.row + row][tetromino.col + col] = tetromino.name;
       }
     }
   }
+
+  // Clear completed lines
+  for (let row = playfield.length - 1; row >= 0; ) {
+    if (playfield[row].every(cell => !!cell)) {
+      for (let r = row; r >= 0; r--) {
+        for (let c = 0; c < playfield[r].length; c++) {
+          playfield[r][c] = playfield[r - 1][c];
+        }
+      }
+      score += 100;
+      document.getElementById('score').innerText = `Score: ${score}`;
+
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem('highScore', highScore);
+        document.getElementById('high-score').innerText = `High Score: ${highScore}`;
+      }
+    } else {
+      row--;
+    }
+  }
+
+  // Prepare the next tetromino
+  tetromino = nextTetromino;
+  nextTetromino = getNextTetromino();
+  renderNextTetromino(); // Update the "next block" display
+}
+
 
   // check for line clears
   for (let row = playfield.length - 1; row >= 0; ) {
@@ -306,7 +334,83 @@ function renderNextTetromino() {
 // game loop
 function loop() {
   rAF = requestAnimationFrame(loop);
-  context.clearRect(0,0,canvas.width,canvas.height);
+  context.clearRect(0, 0, canvas.width, canvas.height);
+
+  // draw the playfield
+  for (let row = 0; row < 20; row++) {
+    for (let col = 0; col < 10; col++) {
+      if (playfield[row][col]) {
+        const name = playfield[row][col];
+        context.fillStyle = colors[name];
+        context.fillRect(col * grid, row * grid, grid - 1, grid - 1);
+      }
+    }
+  }
+
+  // handle tetromino movement
+  if (++count > 35) { // Adjust fall speed by modifying this value
+    count = 0;
+    tetromino.row++;
+
+    if (!isValidMove(tetromino.matrix, tetromino.row, tetromino.col)) {
+      tetromino.row--;
+      placeTetromino(); // Place tetromino if it can't move further
+    }
+  }
+
+  // draw the active tetromino
+  context.fillStyle = colors[tetromino.name];
+  for (let row = 0; row < tetromino.matrix.length; row++) {
+    for (let col = 0; col < tetromino.matrix[row].length; col++) {
+      if (tetromino.matrix[row][col]) {
+        context.fillRect(
+          (tetromino.col + col) * grid,
+          (tetromino.row + row) * grid,
+          grid - 1,
+          grid - 1
+        );
+      }
+    }
+  }
+}
+
+  // draw the playfield
+  for (let row = 0; row < 20; row++) {
+    for (let col = 0; col < 10; col++) {
+      if (playfield[row][col]) {
+        const name = playfield[row][col];
+        context.fillStyle = colors[name];
+        context.fillRect(col * grid, row * grid, grid - 1, grid - 1);
+      }
+    }
+  }
+
+  // handle tetromino movement
+  if (++count > 35) { // Adjust fall speed by modifying this value
+    count = 0;
+    tetromino.row++;
+
+    if (!isValidMove(tetromino.matrix, tetromino.row, tetromino.col)) {
+      tetromino.row--;
+      placeTetromino(); // Place tetromino if it can't move further
+    }
+  }
+
+  // draw the active tetromino
+  context.fillStyle = colors[tetromino.name];
+  for (let row = 0; row < tetromino.matrix.length; row++) {
+    for (let col = 0; col < tetromino.matrix[row].length; col++) {
+      if (tetromino.matrix[row][col]) {
+        context.fillRect(
+          (tetromino.col + col) * grid,
+          (tetromino.row + row) * grid,
+          grid - 1,
+          grid - 1
+        );
+      }
+    }
+  }
+}
 
   // draw the playfield
   for (let row = 0; row < 20; row++) {
