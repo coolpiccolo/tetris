@@ -110,11 +110,16 @@ function getNextTetromino() {
   };
 }
 
+// Rotate a matrix (NxN) 90 degrees
 function rotate(matrix) {
-  const N = matrix.length - 1;
-  return matrix.map((row, i) =>
-    row.map((_, j) => matrix[N - j][i])
-  );
+  const N = matrix.length;
+  const result = Array.from({ length: N }, () => Array(N).fill(0));
+  for (let row = 0; row < N; row++) {
+    for (let col = 0; col < N; col++) {
+      result[col][N - row - 1] = matrix[row][col];
+    }
+  }
+  return result;
 }
 
 function isValidMove(matrix, cellRow, cellCol) {
@@ -261,9 +266,9 @@ document.addEventListener('keydown', function(e) {
       tetromino.col = col;
     }
   } else if (e.key === 'ArrowUp') {
-    const matrix = rotate(tetromino.matrix);
-    if (isValidMove(matrix, tetromino.row, tetromino.col)) {
-      tetromino.matrix = matrix;
+    const rotatedMatrix = rotate(tetromino.matrix);
+    if (isValidMove(rotatedMatrix, tetromino.row, tetromino.col)) {
+      tetromino.matrix = rotatedMatrix;
     }
   } else if (e.key === 'ArrowDown') {
     const row = tetromino.row + 1;
