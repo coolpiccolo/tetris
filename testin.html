@@ -226,34 +226,45 @@ function renderNextTetromino() {
   nextContext.clearRect(0, 0, nextCanvas.width, nextCanvas.height);
   const { matrix, name } = nextTetromino;
   nextContext.fillStyle = colors[name];
-  matrix.forEach((row, r) => {
-    row.forEach((cell, c) => {
-      if (cell) nextContext.fillRect(c * grid, r * grid, grid - 1, grid - 1);
-    });
-  });
+  matrix.forEach((row, r) => row.forEach((cell, c) => {
+    if (cell) nextContext.fillRect(c * grid, r * grid, grid - 1, grid - 1);
+  }));
 }
 
-function loop() {
-  if (!gameOver) {
-    requestAnimationFrame(loop);
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    playfield.forEach((row, r) => row.forEach((cell, c) => {
-      if (cell) {
-        context.fillStyle = colors[cell];
-        context.fillRect(c * grid, r * grid, grid - 1, grid - 1);
-      }
-    }));
-    if (tetromino) {
-      if (!isValidMove(tetromino.matrix, ++tetromino.row, tetromino.col)) {
-        tetromino.row--;
-        placeTetromino();
-      }
-      context.fillStyle = colors[tetromino.name];
-      tetromino.matrix.forEach((row, r) => row.forEach((cell, c) => {
-        if (cell) context.fillRect((tetromino.col + c) * grid, (tetromino.row + r) * grid, grid - 1, grid - 1);
-      }));
+// Speed control
+let dropCounter = 0;
+const dropInterval = 1000; // Tetromino falls every 1000ms (1 second)
+let lastTime = 0;
+
+function loop(time = 0) {
+  const deltaTime = time - lastTime;
+  lastTime = time;
+
+  dropCounter += deltaTime;
+  if (dropCounter > dropInterval) {
+    if (!isValidMove(tetromino.matrix, tetromino.row + 1, tetromino.col)) {
+      placeTetromino();
+    } else {
+      tetromino.row++;
     }
+    dropCounter = 0;
   }
+
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  playfield.forEach((row, r) => row.forEach((cell, c) => {
+    if (cell) {
+      context.fillStyle = colors[cell];
+      context.fillRect(c * grid, r * grid, grid - 1, grid - 1);
+    }
+  }));
+  if (tetromino) {
+    context.fillStyle = colors[tetromino.name];
+    tetromino.matrix.forEach((row, r) => row.forEach((cell, c) => {
+      if (cell) context.fillRect((tetromino.col + c) * grid, (tetromino.row + r) * grid, grid - 1, grid - 1);
+    }));
+  }
+
+  requestAnimationFrame(loop);
 }
 
 document.addEventListener('keydown', e => {
@@ -267,10 +278,10 @@ document.addEventListener('keydown', e => {
     }
     if (e.key === 'ArrowDown') {
       if (!isValidMove(matrix, row + 1, col)) {
-        tetromino.row--;
         placeTetromino();
+      } else {
+        tetromino.row++;
       }
-      tetromino.row++;
     }
   }
 });
