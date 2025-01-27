@@ -4,79 +4,77 @@
   <title>Yousif's Tetris Game</title>
   <meta charset="UTF-8">
   <style>
-  html, body {
-    height: 100%;
-    margin: 0;
-  }
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
 
-  body {
-    background: black;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-  }
+    body {
+      background: black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
 
-  canvas {
-    border: 1px solid white;
-  }
+    canvas {
+      border: 1px solid white;
+    }
 
-  #score {
-    color: white;
-    font-size: 24px;
-    font-family: monospace;
-    position: absolute;
-    top: 10px;
-    right: 10px;
-  }
+    #score {
+      color: white;
+      font-size: 24px;
+      font-family: monospace;
+      position: absolute;
+      top: 10px;
+      right: 10px;
+    }
 
-  #high-score {
-    color: white;
-    font-size: 24px;
-    font-family: monospace;
-    position: absolute;
-    top: 10px;
-    left: 10px;
-  }
+    #high-score {
+      color: white;
+      font-size: 24px;
+      font-family: monospace;
+      position: absolute;
+      top: 10px;
+      left: 10px;
+    }
 
-  #restart-button {
-    display: none; /* Hide button initially */
-    position: absolute;
-    bottom: 50px;
-    left: 50%;
-    transform: translateX(-50%);
-    padding: 10px 20px;
-    background-color: #555;
-    color: white;
-    border: none;
-    font-size: 18px;
-    cursor: pointer;
-    border-radius: 5px;
-  }
+    #restart-button {
+      display: none;
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 20px;
+      background-color: #555;
+      color: white;
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 5px;
+    }
 
-  #restart-button:hover {
-    background-color: #888;
-  }
+    #restart-button:hover {
+      background-color: #888;
+    }
 
-  /* Future block display container */
-  #next-block {
-    position: absolute;
-    top: 60px; /* Positioned below the score */
-    right: 10px;
-    width: 150px;
-    height: 150px;
-    border: 2px solid white;
-  }
+    #next-block {
+      position: absolute;
+      top: 60px;
+      right: 10px;
+      width: 150px;
+      height: 150px;
+      border: 2px solid white;
+    }
 
-  /* Skipped block display container */
-  #skipped-block {
-    position: absolute;
-    top: 220px; /* Positioned below the next block */
-    right: 10px;
-    width: 150px;
-    height: 150px;
-    border: 2px solid white;
-  }
+    #skipped-block {
+      position: absolute;
+      top: 220px;
+      right: 10px;
+      width: 150px;
+      height: 150px;
+      border: 2px solid white;
+    }
   </style>
 </head>
 <body>
@@ -85,12 +83,10 @@
 <div id="high-score">High Score: 0</div>
 <button id="restart-button">Restart Game</button>
 
-<!-- Display the next tetromino -->
 <div id="next-block">
   <canvas width="150" height="150" id="nextCanvas"></canvas>
 </div>
 
-<!-- Display the skipped tetromino -->
 <div id="skipped-block">
   <canvas width="150" height="150" id="skippedCanvas"></canvas>
   <div style="text-align: center; color: white; font-family: monospace; font-size: 16px;">Skipped Block</div>
@@ -191,12 +187,6 @@ function placeTetromino() {
     }
   }
 
-  // Verify proper initialization of tetromino and nextTetromino before updating
-  if (!tetromino || !nextTetromino) {
-    throw new Error("Tetromino or nextTetromino is not initialized correctly.");
-  }
-
-  // Update current tetromino and set next tetromino
   tetromino = nextTetromino; // Replace current tetromino with the next one
   nextTetromino = getNextTetromino(); // Generate a new next tetromino
   renderNextTetromino(); // Ensure display is accurately updated
