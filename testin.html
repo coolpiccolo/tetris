@@ -331,7 +331,16 @@ function loop() {
 document.addEventListener('keydown', function(e) {
   if (gameOver) return;
 
-  // left and right arrow keys (move)
+  // "R" key to re-roll the current tetromino
+  if (e.which === 82) { // Keycode for "R"
+    tetromino = nextTetromino; // Replace current tetromino with the next one
+    nextTetromino = getNextTetromino(); // Generate a new next tetromino
+    renderNextTetromino(); // Update the next block display
+    return; // Prevent further processing for this event
+  }
+
+  // Existing controls for other keys
+  // Left and right arrow keys (move)
   if (e.which === 37 || e.which === 39) {
     const col = e.which === 37
       ? tetromino.col - 1
@@ -341,7 +350,7 @@ document.addEventListener('keydown', function(e) {
     }
   }
 
-  // up arrow key (rotate)
+  // Up arrow key (rotate)
   if (e.which === 38) {
     const matrix = rotate(tetromino.matrix);
     if (isValidMove(matrix, tetromino.row, tetromino.col)) {
@@ -349,7 +358,7 @@ document.addEventListener('keydown', function(e) {
     }
   }
 
-  // down arrow key (drop)
+  // Down arrow key (drop)
   if(e.which === 40) {
     const row = tetromino.row + 1;
     if (!isValidMove(tetromino.matrix, row, tetromino.col)) {
