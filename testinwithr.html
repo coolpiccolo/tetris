@@ -67,6 +67,16 @@
     height: 150px;
     border: 2px solid white;
   }
+
+  /* Skipped block display container */
+  #skipped-block {
+    position: absolute;
+    top: 220px; /* Positioned below the next block */
+    right: 10px;
+    width: 150px;
+    height: 150px;
+    border: 2px solid white;
+  }
   </style>
 </head>
 <body>
@@ -78,6 +88,12 @@
 <!-- Display the next tetromino -->
 <div id="next-block">
   <canvas width="150" height="150" id="nextCanvas"></canvas>
+</div>
+
+<!-- Display the skipped tetromino -->
+<div id="skipped-block">
+  <canvas width="150" height="150" id="skippedCanvas"></canvas>
+  <div style="text-align: center; color: white; font-family: monospace; font-size: 16px;">Skipped Block</div>
 </div>
 
 <script>
@@ -175,10 +191,15 @@ function placeTetromino() {
     }
   }
 
+  // Verify proper initialization of tetromino and nextTetromino before updating
+  if (!tetromino || !nextTetromino) {
+    throw new Error("Tetromino or nextTetromino is not initialized correctly.");
+  }
+
   // Update current tetromino and set next tetromino
-  tetromino = nextTetromino;
-  nextTetromino = getNextTetromino();
-  renderNextTetromino(); // Update the next block display
+  tetromino = nextTetromino; // Replace current tetromino with the next one
+  nextTetromino = getNextTetromino(); // Generate a new next tetromino
+  renderNextTetromino(); // Ensure display is accurately updated
 }
 
 // show the game over screen
@@ -259,6 +280,7 @@ const colors = {
 let count = 0;
 let tetromino = getNextTetromino();
 let nextTetromino = getNextTetromino(); // Store the next tetromino
+let skippedTetromino = null; // Store the skipped tetromino
 let rAF = null;
 let gameOver = false;
 let score = 0; // Initialize score
@@ -270,6 +292,10 @@ document.getElementById('high-score').innerText = `High Score: ${highScore}`;
 // Canvas for rendering the next tetromino
 const nextCanvas = document.getElementById('nextCanvas');
 const nextContext = nextCanvas.getContext('2d');
+
+// Canvas for rendering the skipped tetromino
+const skippedCanvas = document.getElementById('skippedCanvas');
+const skippedContext = skippedCanvas.getContext('2d');
 
 // Render the next tetromino in the small canvas
 function renderNextTetromino() {
@@ -283,6 +309,24 @@ function renderNextTetromino() {
     row.forEach((cell, colIndex) => {
       if (cell) {
         nextContext.fillRect(offsetX + colIndex * grid, offsetY + rowIndex * grid, grid - 1, grid - 1);
+      }
+    });
+  });
+}
+
+// Render the skipped tetromino in the small canvas
+function renderSkippedTetromino() {
+  skippedContext.clearRect(0, 0, skippedCanvas.width, skippedCanvas.height);
+  if (!skippedTetromino) return; // If no skipped block, skip rendering
+  const matrix = skippedTetromino.matrix;
+  const color = colors[skippedTetromino.name];
+  const offsetX = Math.floor((skippedCanvas.width - matrix[0].length * grid) / 2);
+  const offsetY = Math.floor((skippedCanvas.height - matrix.length * grid) / 2);
+  skippedContext.fillStyle = color;
+  matrix.forEach((row, rowIndex) => {
+    row.forEach((cell, colIndex) => {
+      if (cell) {
+        skippedContext.fillRect(offsetX + colIndex * grid, offsetY + rowIndex * grid, grid - 1, grid - 1);
       }
     });
   });
@@ -333,9 +377,11 @@ document.addEventListener('keydown', function(e) {
 
   // "r" key to re-roll the current tetromino
   if (e.key === 'r') { // Use e.key to detect lowercase "r"
+    skippedTetromino = tetromino; // Set the current tetromino as skipped
     tetromino = nextTetromino; // Replace current tetromino with the next one
     nextTetromino = getNextTetromino(); // Generate a new next tetromino
     renderNextTetromino(); // Update the next block display
+    renderSkippedTetromino(); // Update the skipped block display
     return; // Prevent further processing for this event
   }
 
