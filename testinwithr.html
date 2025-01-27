@@ -331,8 +331,8 @@ function loop() {
 document.addEventListener('keydown', function(e) {
   if (gameOver) return;
 
-  // "R" key to re-roll the current tetromino
-  if (e.which === 82) { // Keycode for "R"
+  // "r" key to re-roll the current tetromino
+  if (e.key === 'r') { // Use e.key to detect lowercase "r"
     tetromino = nextTetromino; // Replace current tetromino with the next one
     nextTetromino = getNextTetromino(); // Generate a new next tetromino
     renderNextTetromino(); // Update the next block display
