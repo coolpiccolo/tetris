@@ -373,7 +373,7 @@ function loop() {
 
 // listen to keyboard events to move the active tetromino
 document.addEventListener('keydown', function(e) {
-  if (GameOver) return;
+  if (gameOver) return;
 
   // "r" key to re-roll the current tetromino
   if (e.key === 'r') { // Use e.key to detect lowercase "r"
