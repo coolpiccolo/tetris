@@ -376,12 +376,23 @@ document.addEventListener('keydown', function(e) {
   if (gameOver) return;
 
   // "r" key to re-roll the current tetromino
-  if (e.key === 'r') { // Use e.key to detect lowercase "r"
+  if (e.key === 'r') {
     skippedTetromino = tetromino; // Set the current tetromino as skipped
     tetromino = nextTetromino; // Replace current tetromino with the next one
     nextTetromino = getNextTetromino(); // Generate a new next tetromino
     renderNextTetromino(); // Update the next block display
     renderSkippedTetromino(); // Update the skipped block display
+    return; // Prevent further processing for this event
+  }
+
+  // "e" key to get the skipped block back
+  if (e.key === 'e') {
+    if (skippedTetromino) {
+      const temp = tetromino; // Store current tetromino temporarily
+      tetromino = skippedTetromino; // Replace current tetromino with the skipped one
+      skippedTetromino = temp; // Set the skipped block to the previous current block
+      renderSkippedTetromino(); // Update the skipped block display
+    }
     return; // Prevent further processing for this event
   }
 
@@ -405,7 +416,7 @@ document.addEventListener('keydown', function(e) {
   }
 
   // Down arrow key (drop)
-  if(e.which === 40) {
+  if (e.which === 40) {
     const row = tetromino.row + 1;
     if (!isValidMove(tetromino.matrix, row, tetromino.col)) {
       tetromino.row = row - 1;
